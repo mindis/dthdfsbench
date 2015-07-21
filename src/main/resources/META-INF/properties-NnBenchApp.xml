@@ -18,7 +18,7 @@
 
   <property>
     <name>dt.operator.BenchMark.numFiles</name>
-    <value>1000</value>
+    <value>100</value>
   </property>
 
 </configuration>
