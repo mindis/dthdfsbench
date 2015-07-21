@@ -1,9 +1,9 @@
 package com.datatorrent.bench;
 
+import com.datatorrent.api.BaseOperator;
 import com.datatorrent.api.Context;
 import com.datatorrent.api.InputOperator;
 import com.datatorrent.api.Operator;
-import com.datatorrent.common.util.BaseOperator;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;

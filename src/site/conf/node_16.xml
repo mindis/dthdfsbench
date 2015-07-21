@@ -8,7 +8,7 @@
   -->
   <property>
     <name>dt.operator.BenchMark.attr.PARTITIONER</name>
-    <value>com.datatorrent.common.partitioner.StatelessPartitioner:16</value>
+    <value>com.datatorrent.lib.partitioner.StatelessPartitioner:16</value>
   </property>
 
 </configuration>
