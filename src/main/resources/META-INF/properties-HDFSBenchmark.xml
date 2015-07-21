@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<configuration>
+  <!-- 
+  <property>
+    <name>dt.application.{appName}.operator.{opName}.prop.{propName}</name>
+    <value>some-default-value (if value is not specified, it is required from the user or custom config when launching)</value>
+  </property>
+  -->
+  <property>
+    <name>dt.operator.BenchMark.attr.PARTITIONER</name>
+    <value>com.datatorrent.lib.partitioner.StatelessPartitioner:16</value>
+  </property>
+
+  <property>
+    <name>dt.operator.BenchMark.flushEnabled</name>
+    <value>false</value>
+  </property>
+
+</configuration>
+
