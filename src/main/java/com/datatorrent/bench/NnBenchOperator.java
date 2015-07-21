@@ -6,6 +6,7 @@ import com.datatorrent.api.Operator;
 import com.datatorrent.common.util.BaseOperator;
 import com.google.common.collect.Lists;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.slf4j.Logger;
@@ -77,10 +78,12 @@ public class NnBenchOperator extends BaseOperator implements InputOperator, Oper
   {
     long start = System.currentTimeMillis();
     for(Path p : paths) {
+      logger.info("deleting file {}", p);
       fs.delete(p, false);
     }
     long end = System.currentTimeMillis();
-    logger.info("time take to delete {} files is {}", paths.size(), (end - start));
+    long diff = end - start;
+    logger.info("time take to delete {} files is {} avg {}", paths.size(), diff, (double)diff / paths.size());
   }
 
   private void renameFiles() throws IOException
@@ -89,12 +92,14 @@ public class NnBenchOperator extends BaseOperator implements InputOperator, Oper
     long start = System.currentTimeMillis();
     for(Path p : paths) {
       Path ren = new Path(p + ".renamed");
+      logger.info("renaming file {} to {}", p, ren);
       fs.rename(p, ren);
       renamed.add(ren);
     }
     long end = System.currentTimeMillis();
     paths = renamed;
-    logger.info("time taken for rename {} files {}", paths.size(), (end-start));
+    long diff = end - start;
+    logger.info("time taken for rename {} files {} avg {}", paths.size(), diff, (double)diff/paths.size());
   }
 
   private void writeFiles() throws IOException
@@ -102,11 +107,14 @@ public class NnBenchOperator extends BaseOperator implements InputOperator, Oper
     long start = System.currentTimeMillis();
     for(int i = 0; i < numFiles; i++) {
       Path curr = new Path(path, operatorId + "/file" + i);
-      fs.create(curr);
+      FSDataOutputStream out = fs.create(curr);
+      out.write(i);
+      out.close();
       paths.add(curr);
     }
     long end = System.currentTimeMillis();
-    logger.info("time take to create {} files is {}", numFiles, (end - start));
+    long diff = end - start;
+    logger.info("time take to create {} files is {} avg {}", numFiles, diff, (double)diff/paths.size());
   }
 
   @Override public void checkpointed(long windowId)
@@ -119,6 +127,6 @@ public class NnBenchOperator extends BaseOperator implements InputOperator, Oper
 
   }
 
-  private static final Logger logger = LoggerFactory.getLogger(FsWriteOperator.class);
+  private static final Logger logger = LoggerFactory.getLogger(NnBenchOperator.class);
 
 }
