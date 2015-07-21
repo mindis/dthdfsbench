@@ -7,22 +7,17 @@
   </property>
   -->
   <property>
-    <name>dt.attr.MASTER_MEMORY_MB</name>
-    <value>1024</value>
-  </property>
-
-  <property>
-    <name>dt.operator.BenchMark.attr.MEMORY_MB</name>
+    <name>dt.operator.NnBench.attr.MEMORY_MB</name>
     <value>4000</value>
   </property>
 
   <property>
-    <name>dt.operator.NnBench.attr.PARTITIONER</name>
-    <value>com.datatorrent.lib.partitioner.StatelessPartitioner:16</value>
+    <name>dt.operator.BenchMark.attr.PARTITIONER</name>
+    <value>com.datatorrent.common.partitioner.StatelessPartitioner:16</value>
   </property>
 
   <property>
-    <name>dt.operator.NnBench.numFiles</name>
+    <name>dt.operator.BenchMark.numFiles</name>
     <value>1000</value>
   </property>
 

@@ -14,6 +14,6 @@ public class NnBenchApp implements StreamingApplication
   @Override
   public void populateDAG(DAG dag, Configuration conf)
   {
-    dag.addOperator("NnBench", new NnBenchOperator());
+    dag.addOperator("BenchMark", new NnBenchOperator());
   }
 }

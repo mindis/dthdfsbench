@@ -54,7 +54,7 @@ public class NnBenchOperator extends BaseOperator implements InputOperator, Oper
           }
         }
       };
-      thrd.run();
+      thrd.start();
     } catch (Exception ex) {
       throw new RuntimeException("Unable to initialize filesystem");
     }
