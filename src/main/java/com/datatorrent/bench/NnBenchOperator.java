@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class NnBenchOperator extends BaseOperator implements InputOperator, Operator.CheckpointListener
 {
-  int numFiles = 1000;
+  int numFiles = 100;
   private transient FileSystem fs;
   public String pathStr = "fsbench";
   private transient Path path;
@@ -28,6 +28,7 @@ public class NnBenchOperator extends BaseOperator implements InputOperator, Oper
   private String type = "write,rename,delete";
 
   private transient List<Path> paths = Lists.newArrayList();
+  private int fileSize = 0;
 
   @Override public void emitTuples()
   {
@@ -45,6 +46,7 @@ public class NnBenchOperator extends BaseOperator implements InputOperator, Oper
       path = new Path(pathStr);
       fs = FileSystem.newInstance(path.toUri(), new Configuration());
       path = new Path(path, String.valueOf(operatorId));
+      fs.delete(path, true);
       super.setup(context);
       Thread thrd = new Thread() {
         public void run() {
@@ -107,9 +109,13 @@ public class NnBenchOperator extends BaseOperator implements InputOperator, Oper
     long start = System.currentTimeMillis();
     for(int i = 0; i < numFiles; i++) {
       Path curr = new Path(path, operatorId + "/file" + i);
-      FSDataOutputStream out = fs.create(curr);
-      out.write(i);
-      out.close();
+      if (fileSize > 0) {
+        FSDataOutputStream out = fs.create(curr);
+        out.write(i);
+        out.close();
+      } else {
+        fs.create(curr);
+      }
       paths.add(curr);
     }
     long end = System.currentTimeMillis();
@@ -129,4 +135,43 @@ public class NnBenchOperator extends BaseOperator implements InputOperator, Oper
 
   private static final Logger logger = LoggerFactory.getLogger(NnBenchOperator.class);
 
+  public int getNumFiles()
+  {
+    return numFiles;
+  }
+
+  public void setNumFiles(int numFiles)
+  {
+    this.numFiles = numFiles;
+  }
+
+  public String getPathStr()
+  {
+    return pathStr;
+  }
+
+  public void setPathStr(String pathStr)
+  {
+    this.pathStr = pathStr;
+  }
+
+  public String getType()
+  {
+    return type;
+  }
+
+  public void setType(String type)
+  {
+    this.type = type;
+  }
+
+  public int getFileSize()
+  {
+    return fileSize;
+  }
+
+  public void setFileSize(int fileSize)
+  {
+    this.fileSize = fileSize;
+  }
 }
