@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Run metadata operation, and print stats at the end.
@@ -29,6 +30,7 @@ public class NnBenchOperator extends BaseOperator implements InputOperator, Oper
 
   private transient List<Path> paths = Lists.newArrayList();
   private int fileSize = 0;
+  private byte[] buffer;
 
   @Override public void emitTuples()
   {
@@ -47,6 +49,7 @@ public class NnBenchOperator extends BaseOperator implements InputOperator, Oper
       fs = FileSystem.newInstance(path.toUri(), new Configuration());
       path = new Path(path, String.valueOf(operatorId));
       fs.delete(path, true);
+      buffer = getRandomBuffer();
       super.setup(context);
       Thread thrd = new Thread() {
         public void run() {
@@ -61,6 +64,15 @@ public class NnBenchOperator extends BaseOperator implements InputOperator, Oper
     } catch (Exception ex) {
       throw new RuntimeException("Unable to initialize filesystem");
     }
+  }
+
+
+  private byte[] getRandomBuffer()
+  {
+    byte[] bytes = new byte[fileSize];
+    Random r = new Random();
+    r.nextBytes(bytes);
+    return bytes;
   }
 
   void runBenchmark() throws IOException
@@ -109,12 +121,15 @@ public class NnBenchOperator extends BaseOperator implements InputOperator, Oper
     long start = System.currentTimeMillis();
     for(int i = 0; i < numFiles; i++) {
       Path curr = new Path(path, operatorId + "/file" + i);
-      if (fileSize > 0) {
-        FSDataOutputStream out = fs.create(curr);
-        out.write(i);
-        out.close();
-      } else {
-        fs.create(curr);
+      FSDataOutputStream out = null;
+      try {
+        out = fs.create(curr);
+        if (fileSize > 0) {
+          out.write(buffer);
+        }
+      } finally {
+        if (out != null)
+          out.close();
       }
       paths.add(curr);
     }
